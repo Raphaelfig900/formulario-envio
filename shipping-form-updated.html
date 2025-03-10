@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Envío</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .step-container {
+            margin-bottom: 20px;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        
+        .step {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #F5A313;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 5px;
+            font-weight: bold;
+        }
+        
+        .step.active .step-number {
+            background-color: #003992;
+            color: white;
+        }
+        
+        .step-title {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .form-step {
+            display: none;
+        }
+        
+        .form-step.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 30px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .toggle-label {
+            margin-right: auto;
+            font-weight: bold;
+        }
+        
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #003992;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .btn-prev {
+            background-color: #F5A313;
+            color: #333;
+        }
+        
+        .btn-next {
+            background-color: #003992;
+            color: white;
+        }
+        
+        .warning {
+            background-color: #fff8e6;
+            border-left: 4px solid #FB8313;
+            padding: 15px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .warning-icon {
+            color: #FB8313;
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        
+        .options-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .option-card {
+            border: 1px solid #F5A313;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            width: 30%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option-card:hover, .option-card.selected {
+            border-color: #003992;
+            background-color: #f0f4f8;
+        }
+        
+        .option-card i {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+        
+        .quotation-box {
+            border: 1px solid #F5A313;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            background-color: #f9f9f9;
+        }
+        
+        .quotation-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .quotation-total {
+            font-weight: bold;
+            border-top: 1px solid #F5A313;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Solicitud de Envío</h1>
+        
+        <div class="step-indicator">
+            <div class="step active" id="step-indicator-1">
+                <div class="step-number">1</div>
+                <div class="step-title">Origen</div>
+            </div>
+            <div class="step" id="step-indicator-2">
+                <div class="step-number">2</div>
+                <div class="step-title">Destino</div>
+            </div>
+            <div class="step" id="step-indicator-3">
+                <div class="step-number">3</div>
+                <div class="step-title">Pedido</div>
+            </div>
+            <div class="step" id="step-indicator-4">
+                <div class="step-number">4</div>
+                <div class="step-title">Cotización</div>
+            </div>
+        </div>
+        
+        <form id="shipping-form">
+            <!-- Step 1: ¿Donde Recogemos? -->
+            <div class="form-step active" id="step1">
+                <h2>¿Donde Recogemos?</h2>
+                
+                <div class="form-group">
+                    <label for="nombre">Nombre y Apellido:</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Ej: Raphael Figuéres" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="telefono">Teléfono:</label>
+                    <input type="tel" id="telefono" name="telefono" placeholder="Ej: 0976 116 243" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ubicacion">Ubicación:</label>
+                    <input type="text" id="ubicacion" name="ubicacion" placeholder="URL" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="referencia">Referencia:</label>
+                    <input type="text" id="referencia" name="referencia" placeholder="Ej: Paseo Galería torre 1 Piso N.º 4" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="horario">Horario:</label>
+                    <input type="text" id="horario" name="horario" placeholder="Ej: De retiro" required>
+                </div>
+                              
+                <div class="buttons">
+                    <div></div> <!-- Spacer for flex layout -->
+                    <button type="button" class="btn-next" onclick="nextStep(1)">Siguiente</button>
+                </div>
+            </div>
+            
+            <!-- Step 2: ¿Donde Entregamos? -->
+            <div class="form-step" id="step2">
+                <h2>¿Donde Entregamos?</h2>
+                
+                <div class="form-group">
+                    <label for="nombreDestino">Nombre y Apellido:</label>
+                    <input type="text" id="nombreDestino" name="nombreDestino" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="telefonoDestino">Teléfono:</label>
+                    <input type="tel" id="telefonoDestino" name="telefonoDestino" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ubicacionDestino">Ubicación:</label>
+                    <input type="text" id="ubicacionDestino" name="ubicacionDestino" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="referenciaDestino">Referencia:</label>
+                    <input type="text" id="referenciaDestino" name="referenciaDestino" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="horarioDestino">Horario:</label>
+                    <input type="text" id="horarioDestino" name="horarioDestino" required>
+                </div>
+                
+                <div class="buttons">
+                    <button type="button" class="btn-prev" onclick="prevStep(2)">Anterior</button>
+                    <button type="button" class="btn-next" onclick="nextStep(2)">Siguiente</button>
+                </div>
+            </div>
+            
+            <!-- Step 3: Acerca del envio -->
+            <div class="form-step" id="step3">
+                <h2>Acerca del envio</h2>
+                
+                <div class="form-group">
+                    <label for="descripcion">Descripción de la Mercadería:</label>
+                    <input type="text" id="descripcion" name="descripcion" placeholder="Pequeño, Mediano, Grande" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="costo">Costo de Mercadería:</label>
+                    <input type="text" id="costo" name="costo" placeholder="¿Se debe de algo pagar?" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="observacion">Observación:</label>
+                    <input type="text" id="observacion" name="observacion" placeholder="Frágil" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lugarCobro">Lugar de Cobro:</label>
+                    <select id="lugarCobro" name="lugarCobro" required>
+                        <option value="" disabled selected>Selecciona</option>
+                        <option value="origen">Origen</option>
+                        <option value="destino">Destino</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="metodoPago">Método de Pago:</label>
+                    <select id="metodoPago" name="metodoPago" required>
+                        <option value="" disabled selected>Selecciona</option>
+                        <option value="efectivo">Efectivo</option>
+                        <option value="tarjeta">Tarjeta</option>
+                        <option value="transferencia">Transferencia</option>
+                    </select>
+                </div>
+                
+                <div class="toggle-container">
+                    <span class="toggle-label">¿Ida & Vuelta?</span>
+                    <label class="toggle">
+                        <input type="checkbox" id="idaVuelta" name="idaVuelta">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div class="form-group" id="motivoIdaVuelta" style="display:none;">
+                    <label for="motivo">Motivo de la ida y vuelta:</label>
+                    <input type="text" id="motivo" name="motivo" placeholder="Si no es estrictamente necesario se vera la forma de evitar">
+                </div>
+                
+                <div class="warning">
+                    <div class="warning-icon">⚠️</div>
+                    <div>
+                        Esta Prohibido llevar Productos Químicos, Armas o Sustancias Prohibidas.
+                    </div>
+                </div>
+                
+                <div class="buttons">
+                    <button type="button" class="btn-prev" onclick="prevStep(3)">Anterior</button>
+                    <button type="button" class="btn-next" onclick="nextStep(3)">Siguiente</button>
+                </div>
+            </div>
+            
+            <!-- Step 4: Cotización -->
+            <div class="form-step" id="step4">
+                <h2>Cotización</h2>
+                
+                <div class="quotation-box">
+                    <div class="quotation-row">
+                        <span>Distancia:</span>
+                        <span>7.2 km</span>
+                    </div>
+                    <div class="quotation-row">
+                        <span>Costo por km:</span>
+                        <span>Gs 25.000</span>
+                    </div>
+                    <div class="quotation-row">
+                        <span>Tarifa base:</span>
+                        <span>Gs 25.000</span>
+                    </div>
+                    <div class="quotation-row quotation-total">
+                        <span>Total:</span>
+                        <span>Gs 25.000</span>
+                    </div>
+                </div>
+                
+                <h3>Seleccione una opción:</h3>
+                
+                <div class="options-container">
+                    <div class="option-card" onclick="selectOption('enviar')">
+                        <i>📦</i>
+                        <div>Enviar ahora</div>
+                    </div>
+                    <div class="option-card" onclick="selectOption('agendar')">
+                        <i>📅</i>
+                        <div>Agendar</div>
+                    </div>
+                    <div class="option-card" onclick="selectOption('cancelar')">
+                        <i>❌</i>
+                        <div>Cancelar</div>
+                    </div>
+                </div>
+                
+                <div id="agendar-container" style="display:none; margin-top: 20px;">
+                    <div class="form-group">
+                        <label for="fechaAgendada">Fecha para el envío:</label>
+                        <input type="date" id="fechaAgendada" name="fechaAgendada" min="">
+                    </div>
+                    <div class="form-group">
+                        <label for="horaAgendada">Hora para el envío:</label>
+                        <input type="time" id="horaAgendada" name="horaAgendada">
+                    </div>
+                </div>
+                
+                <div class="buttons">
+                    <button type="button" class="btn-prev" onclick="prevStep(4)">Anterior</button>
+                    <button type="submit" class="btn-next" id="submitBtn">Confirmar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        // Set minimum date for scheduling to today
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('fechaAgendada').min = today;
+        });
+        
+        // Toggle ida y vuelta reason field
+        document.getElementById('idaVuelta').addEventListener('change', function() {
+            const motivoField = document.getElementById('motivoIdaVuelta');
+            motivoField.style.display = this.checked ? 'block' : 'none';
+        });
+        
+        // Navigation between steps
+        function nextStep(currentStep) {
+            document.getElementById('step' + currentStep).classList.remove('active');
+            document.getElementById('step' + (currentStep + 1)).classList.add('active');
+            
+            document.getElementById('step-indicator-' + currentStep).classList.remove('active');
+            document.getElementById('step-indicator-' + (currentStep + 1)).classList.add('active');
+        }
+        
+        function prevStep(currentStep) {
+            document.getElementById('step' + currentStep).classList.remove('active');
+            document.getElementById('step' + (currentStep - 1)).classList.add('active');
+            
+            document.getElementById('step-indicator-' + currentStep).classList.remove('active');
+            document.getElementById('step-indicator-' + (currentStep - 1)).classList.add('active');
+        }
+        
+        // Handle option selection in step 4
+        function selectOption(option) {
+            // Remove selection from all cards
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selection to clicked card
+            event.currentTarget.classList.add('selected');
+            
+            // Show/hide date fields for scheduling
+            const agendarContainer = document.getElementById('agendar-container');
+            agendarContainer.style.display = option === 'agendar' ? 'block' : 'none';
+            
+            // Update submit button text based on selection
+            const submitBtn = document.getElementById('submitBtn');
+            if (option === 'enviar') {
+                submitBtn.textContent = 'Enviar Ahora';
+            } else if (option === 'agendar') {
+                submitBtn.textContent = 'Confirmar Agenda';
+            } else if (option === 'cancelar') {
+                submitBtn.textContent = 'Cancelar Solicitud';
+            }
+        }
+        
+        // Form submission
+        document.getElementById('shipping-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('¡Formulario enviado con éxito!');
+            // Here you would normally submit the form data to your server
+        });
+    </script>
+
+</body>
+</html>
